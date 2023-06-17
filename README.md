@@ -1,1 +1,1 @@
-# Sequence_Detector
+#FIFO memory using Verilog HDL

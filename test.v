@@ -1,13 +1,8 @@
  `timescale     10 ps/ 10 ps  
-// fpga4student.com: FPga projects, Verilog projects, VHDL projects
-// Verilog project: Verilog code for FIFO memory
-// Verilog Testbench code for FIFO memory 
- // 2. Preprocessor Directives  
  `define          DELAY 10  
- // 3. Include Statements  
- //`include     "counter_define.h"  
+
  module     tb_fifo_32;  
- // 4. Parameter definitions  
+
  parameter     ENDTIME      = 40000;  
  // 5. DUT Input regs  
  reg     clk;  

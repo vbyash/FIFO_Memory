@@ -19,7 +19,6 @@
  wire     fifo_underflow;  
  integer i;  
  // 7. DUT Instantiation
-// fpga4student.com: FPga projects, Verilog projects, VHDL projects  
  fifo_mem tb (/*AUTOARG*/  
    // Outputs  
    data_out, fifo_full, fifo_empty, fifo_threshold, fifo_overflow,   

@@ -1,4 +1,4 @@
-module FIFO( clock, reset, clear, data_in, write, read, full, empty);
+module FIFO( clock, reset, clear, data_in, write, read, full, empty, data_out);
   input clock;
   input reset;
   input clear;

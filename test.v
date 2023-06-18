@@ -32,7 +32,7 @@ module FIFO_test;
   #10 reset = 0;
   // First write some data into the queue
    #10 wn = 1; rn = 0;
-   #10 in = 8'd100;
+   in = 8'd100;
    #10 in = 8'd150;
    #10 in = 8'd200;
    #10 in = 8'd40;

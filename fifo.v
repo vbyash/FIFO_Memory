@@ -1,15 +1,15 @@
-module jFIFO(DATAOUT, full, empty, clock, reset, wn, rn, DATAIN);
-  output reg [7:0] DATAOUT;
+module FIFO(data_out, full, empty, clock, reset, wn, rn, data_in);
+  output reg [7:0] data_out;
   output reg [1:0]full, empty;
-  input [7:0] DATAIN;
-  input clock, reset, wn, rn;
+  input [7:0] data_in;
+  input clk, reset, wr, rd;
   integer i;
   
   reg [2:0] wptr, rptr; // pointers tracking the stack
   reg [7:0] memory [7:0]; // the stack is 8 bit wide and 8 locations in size
   
 
-  always @(posedge rn, wn, clock)
+  always @(posedge rd, wr, clk)
     begin
       if((wptr == 3'b111) & (rptr == 3'b000))
         full<=1;
@@ -18,7 +18,7 @@ module jFIFO(DATAOUT, full, empty, clock, reset, wn, rn, DATAIN);
     end
   
   
-  always @(posedge rn, wn, clock)
+  always @(posedge rd, wr, clk)
     begin
       if((wptr == rptr))
         empty<=1;
@@ -27,12 +27,12 @@ module jFIFO(DATAOUT, full, empty, clock, reset, wn, rn, DATAIN);
     end
  
   
-  always @(posedge clock)
+  always @(posedge clk)
   begin
     if (reset)
       begin
         
-        DATAOUT <= 0; 
+        data_out <= 0; 
         wptr <= 0; 
         rptr <= 0;
         
@@ -43,15 +43,15 @@ module jFIFO(DATAOUT, full, empty, clock, reset, wn, rn, DATAIN);
         
       end
     
-    else if (wn & !full)
+    else if (wr & !full)
       begin
-        memory[wptr] <= DATAIN;
+        memory[wptr] <= data_in;
         wptr <= wptr + 1;
       end
     
-    else if (rn & !empty)
+    else if (rd & !empty)
       begin
-        DATAOUT <= memory[rptr];
+        data_out <= memory[rptr];
         rptr <= rptr + 1;
       end
     

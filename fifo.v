@@ -2,21 +2,23 @@ module FIFO( clock, reset, clear, data_in, write, read, full, empty, data_out);
   input clock;
   input reset;
   input clear;
-  input [31:0] data_in;
+  input [15:0] data_in;
   input write;
   input read;
 
-  output [31:0] data_out;
+  output [15:0] data_out;
   output reg full;
   output reg empty;
 
+  reg last_f;
+  reg first_f;
 
   reg [2:0]counter;
   reg [2:0]rd_ptr;
   reg [2:0]wr_ptr;
 
-  wire [31:0]d_out;
-  wire [31:0]d_in;
+  wire [15:0]d_out;
+  wire [15:0]d_in;
   wire read_fifo=read;
   wire write_fifo=write;
 
@@ -68,12 +70,29 @@ module FIFO( clock, reset, clear, data_in, write, read, full, empty, data_out);
             begin
               if(empty==1'b1 && write_fifo==1'b1)
                 empty<=1'b0;
-              else if(counter==1 && read_fifo==1'b1 && write_fifo==1'b0)
+              else if(first_f==1'b1 && read_fifo==1'b1 && write_fifo==1'b0)
                 empty<=1'b1;
             end
         end
     end
 
+   always @(posedge clock,reset)
+     begin
+       if(reset)
+         first_f<=1'b0;
+       else
+         begin
+           if(clear)
+             first_f<=1'b0;
+           else
+             begin
+               if((empty==1'b1 && write_fifo==1'b1)||(counter==2 && read_fifo==1'b1 && write_fifo==1'b0))
+                 first_f<=1'b1;
+               else if(first_f==1'b1 && (write_fifo^read_fifo))
+                 first_f<=1'b0;
+             end
+         end
+     end
 
     always @(posedge clock, reset)
     begin
@@ -87,13 +106,30 @@ module FIFO( clock, reset, clear, data_in, write, read, full, empty, data_out);
             begin
               if(full==1'b1 && read_fifo==1'b1)
                 full<=1'b0;
-              else if(counter==7 && read_fifo==1'b0 && write_fifo==1'b1)
+              else if(last_f==1'b1 && read_fifo==1'b0 && write_fifo==1'b1)
                 full<=1'b1;
             end
         end
     end
+  
       
-
+ always @(posedge clock,reset)
+     begin
+       if(reset)
+         last_f<=1'b0;
+       else
+         begin
+           if(clear)
+             first_f<=1'b0;
+           else
+             begin
+               if((full==1'b1 && read_fifo==1'b1)||(counter==6 && write_fifo==1'b1 && read_fifo==1'b0))
+                 last_f<=1'b1;
+               else if(last_f==1'b1 && (write_fifo^read_fifo))
+                 last_f<=1'b0;
+             end
+         end
+     end
   
 endmodule
 
@@ -103,10 +139,10 @@ module memory(clk, write_f, wr_addr, rd_addr, din, dout);
   input write_f;
   input [2:0]wr_addr;
   input [2:0]rd_addr;
-  input [31:0]din;
-  output [31:0]dout;
+  input [15:0]din;
+  output [15:0]dout;
   wire dout;
-  reg [31:0]FIFO_blk[0:7];
+  reg [15:0]FIFO_blk[0:7];
 
   assign dout=FIFO_blk[rd_addr];
   always @(posedge clk)
@@ -116,3 +152,5 @@ module memory(clk, write_f, wr_addr, rd_addr, din, dout);
     end
 endmodule
   
+
+

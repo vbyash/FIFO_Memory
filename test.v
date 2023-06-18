@@ -8,8 +8,8 @@ module FIFO_test;
   
  initial 
   begin
-   clk=0;
-  forever #5 clk=~clk;
+   clocks=0;
+  forever #5 clocks=~clocks;
   end
  
  initial 
